@@ -14,9 +14,6 @@
 $hostname='localhost';
 $username='root';
 $password='root';
-//$hostname = "swpsup01";
-//$username = "backup";
-//$password = "save";
 $dbname='pilreminder';
 $dbtable= "reminder";
 
