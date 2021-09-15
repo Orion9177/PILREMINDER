@@ -1,0 +1,31 @@
+ /* --- Style commun --- */
+
+body{
+   padding:10px;
+   font:12pt sans-serif;
+   color: #581d74;
+   background-color: #faf3fd;
+}
+ table{
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse; 
+    text-align: center;
+ }
+ th.titre{
+   background-color: #581d74;
+   border: 1px solid black;
+   color: #faf3fd;
+
+ }
+ td.ligne{
+   background-color: #faf3fd;
+   border: 1px solid black;
+   color: #581d74;
+ }
+ td.erreur{
+  background-color: #b883d1;
+  border: 1px solid black;
+  color: #faf3fd;
+  font : bold;
+}
