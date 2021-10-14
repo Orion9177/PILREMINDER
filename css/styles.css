@@ -91,6 +91,10 @@ label{
    font:12pt sans-serif;
    color:#581d74;
 }
+option{
+   font:12pt sans-serif;
+   color:#581d74;
+}
 
 /* --- Style pour le menu --- */
 
@@ -217,7 +221,7 @@ label{
    color: #581d74;
  }
  td.erreur{
-  background-color: #b883d1;
+  background-color: #d65454;
   border: 1px solid black;
   color: #faf3fd;
   font : bold;

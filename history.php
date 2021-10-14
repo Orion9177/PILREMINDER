@@ -24,7 +24,7 @@ require_once ("inc/db_config.php");
         $from = isset($_POST['from']) ? $_POST['from'] : NULL;
         $to = isset($_POST['to']) ? $_POST['to'] : NULL;
 
-        $req_fetch_history="SELECT *, TIMEDIFF(expiration, NOW())
+        $req_fetch_history="SELECT *, TIMEDIFF(expiration, NOW()), TIMEDIFF(TIMEDIFF(expiration, creation_date), delay)
                         FROM $dbtable 
                         WHERE creation_date BETWEEN '$from' AND '$to'";
 
@@ -44,12 +44,11 @@ require_once ("inc/db_config.php");
 <?php
 //Génération du tableau en fonction des paramêtres de recherche avec affichage du temps de traitement ou du temps restant
         while ($row=$DB_fetch_history->fetch(PDO::FETCH_ASSOC)) {
-                var_dump($row);
-                if($row['statut']>1){
+                if($row['statut'] != 'Expiré' && $row['statut'] != 'En cours'){
 ?>
                         <tr><td class="ligne"><?php echo $row['name'];?></td>
                         <td class="ligne"><?php echo $row['action'];?></td>
-                        <td class="ligne"><?php echo $row['delay']?></td>
+                        <td class="ligne"><?php echo $row['TIMEDIFF(TIMEDIFF(expiration, creation_date), delay)']?></td>
                         <td class="ligne"><?php echo $row['statut'];?></td>
 <?php
                 }

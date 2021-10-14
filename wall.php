@@ -27,7 +27,7 @@ require_once('inc/db_config.php');
 
         $req_fetch = "SELECT name, statut, action, expiration, TIMEDIFF(expiration, NOW())
                       FROM $dbtable 
-                      WHERE statut IN (0, 1)
+                      WHERE statut IN ('En cours', 'Expiré')
                       ORDER BY TIMEDIFF(expiration, NOW()) ASC";
         
         $DB_fetch = $pdo -> prepare($req_fetch);
@@ -43,17 +43,11 @@ echo '<table>';
     echo '<tbody>';
 
 $DB_fetch -> execute();
-$redirection = 'wall.php';
 $i=0;
 
     while ($row = $DB_fetch -> fetch(PDO::FETCH_ASSOC) ) {
         $secondes = strtotime($row['expiration']) - time();
-        
-        echo '<script type="text/javascript">
-                createCountDown("timer'.$i.'", "'.$row['expiration'].'")
-              </script>';
-
-        if($row['statut'] != 1){
+        if($row['statut'] != 'Expiré'){
             echo '<tr><td class="ligne">'.$row['name'].'</td>';
             echo '<td class="ligne"> <div id="timer'.$i.'"></div></td>';
             echo '<td class="ligne">'.$row['action'].'</td>';
@@ -65,6 +59,9 @@ $i=0;
             echo '<td class="erreur"">'.$row['action'].'</td>';
             }  
 
+            echo '<script type="text/javascript">
+            createCountDown("timer'.$i.'", "'.$secondes.'")
+          </script>';
         $i++;
     }
     echo <<<html

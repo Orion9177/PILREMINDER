@@ -1,5 +1,4 @@
 <?php
-//header("refresh: 60;");
 
 //---------------------------------------------------------------                                                                     
 //
@@ -31,10 +30,14 @@ session_start();
         value="<?php echo '15';?>" required>
 
         <label for="action"> Actions requises :</label>
-        <input id="action" type="text" name="action" 
-        value="" required>
+        <input id="action" list="required-actions" name="action" required>
+        <datalist id="required-actions">
+            <option value = "Appeler l’astreinte pour une levée de doute">
+            <option value = "Reprendre job">
+            <option value = "Vérifier l’état d’un job à la suite d’une relance">
+        </datalist>
 
-        <input id="add" name="add" type="submit" value="Ajouter">
+        <input id="add" name="add" type="submit" value="Ajouter" onclick="location.reload();">
 
     </fieldset>
 </form></br>
@@ -53,15 +56,18 @@ $reminder = isset($_POST['reminder']) ? $_POST['reminder'] : NULL;
 $time = isset($_POST['time']) ? $_POST['time'] : NULL;
 $action = isset($_POST['action']) ? $_POST['action'] : NULL;
 
-//Permet de rajouter X minutes à la date de l'ajout du rappel
-$date = date_create(date('Y-m-d H:i:s'));
-date_add($date, date_interval_create_from_date_string($time.'minutes'));
-$expiration = date_format($date, 'Y-m-d H:i:s');
+
 
 //Définition du tableau à enregistrer en base suite à la saisie du formulaire
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    if(!empty($reminder && $time)){
+    if(!empty($reminder && $time && $action)){
         
+//Permet de rajouter X minutes à la date de l'ajout du rappel
+        $date = date_create(date('Y-m-d H:i:s'));
+        $interval = DateInterval::createFromDateString($time. 'minutes');
+        date_add($date, $interval);
+        $expiration = date_format($date, 'Y-m-d H:i:s');
+
         $reminder=array
         (
             "name" => $reminder,
@@ -69,14 +75,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             "expiration" => $expiration,
             "action" => $action,
             "delay" => date('H:i:s'),
-            "statut" => 0,
+            "statut" => 'En cours',
+			"mail" => 'non',
         );
 
 //Requête d'insertion en base du formulaire
-        $req_add = "INSERT INTO $dbtable (name, creation_date, expiration, action, delay, statut) 
-                    VALUE (:name, :creation_date, :expiration, :action, :delay, :statut)";
+        $req_add = "INSERT INTO $dbtable (name, creation_date, expiration, action, delay, statut, mail) 
+                    VALUE (:name, :creation_date, :expiration, :action, :delay, :statut, :mail)";
         $DB_insert = $pdo->prepare($req_add);
         $DB_insert->execute($reminder);
+
+        header("location: index.php");
     }
 }
 
@@ -91,9 +100,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 // Requête permettant de trouver les rappels en cours ou expirés non traité
 // et calcul la différence en la date d'expiration et le temps courant
 
-$req_fetch = "SELECT id, name, action, statut, expiration, TIMEDIFF(expiration, NOW()), TIMEDIFF(NOW(), expiration)
+$req_fetch = "SELECT id, name, action, statut, expiration, TIMEDIFF(expiration, NOW()), TIMEDIFF(NOW(), expiration), mail
 FROM $dbtable 
-WHERE statut IN (0, 1)
+WHERE statut IN ('En cours', 'Expiré')
 ORDER BY TIMEDIFF(expiration, NOW()) ASC";
 
 $DB_fetch = $pdo->prepare($req_fetch);
@@ -106,39 +115,45 @@ foreach ($data as $line){
     $name = $line["name"];
     $action = $line["action"];
     $id = $line["id"];
+	$mail = $line["mail"];
+	$statut = $line["statut"];
+	
     
 // Si l'expiration est dépassée, la BDD est mise à jour en changeant le statut 
-    if($timediff = '00:00:00'){
+    if($timediff <= '00:00:00' && $mail != 'oui'){
         $req_update = "UPDATE $dbtable
-        SET statut = 1
-        WHERE TIMEDIFF (NOW(), expiration)>'00:00' AND statut LIKE 0 AND NOT statut IN (2, 3)";
+        SET statut = 'Expiré'
+        WHERE TIMEDIFF (NOW(), expiration)>'00:00' AND statut LIKE 'En cours' AND NOT statut IN ('Traité', 'Annulé')";
         
         $DB_update = $pdo->prepare($req_update);
         $DB_update -> execute();
-
+		
 //Envoi du mail de rappel au Pilotage BPCE    
-        // $destinataire = "baptiste.trolet-ext@natixis.com";
-        // //$destinataire = "ld-dsi-inf-pop-pil-spv-backoffice@natixis.com";
-        // $headers = "From: dsi-backoffice-supervision@natixis.com\n";
-        // $headers .= "Content-Type: text/html; charset=\"utf-8\"";
-        
-        // $sujet = "Pil'Reminder : ".date("d/m");
-        
-        // $message = "<p>Bonjour,</p>
-
-        // <p>Le rappel ".$name." a expiré.</p>
-
-        // <p> Merci de réaliser les actions suivantes : ".$action.".</p> 
-
-        // <p> Cordialement,</p> 
-        
-        // <p><strong style = 'color: #581D74'>Supervision - Back Office</strong></br>
-        // <strong style = 'color: #00A193'>BPCE Infogérance & Technologies</br>
-        // Tour de Contrôle (TRC) – Supervision Des Services (SDS)</strong></br>
-        // 14-18 Avenue du Général de Gaulle - 94220 Charenton-le-Pont</br></p>";
-        
-        // mail($destinataire,$sujet,$message,$headers);
-    }
+		//$destinataire = "baptiste.trolet-ext@natixis.com";
+		$destinataire = "bpce-it_n1_suivi_backoffice_b@bpce-it.fr";
+		$headers = "From: bpce-it_n1_suivi_backoffice_b@bpce-it.fr\n";
+		$headers .= "Content-Type: text/html; charset=\"utf-8\"";
+				
+		$sujet = "Pil'Reminder : ".$name." expiré";
+				
+		$message = "<p>Bonjour,</p>
+		<p>Le rappel <strong>".$name."</strong> a expiré.</p>
+		<p> Merci de réaliser les actions suivantes : <strong>".$action."</strong>.</p> 
+		<p> Cordialement,</p> 
+		
+		<p><strong style = 'color: #581D74'>Supervision - Back Office</strong></br>
+		<strong style = 'color: #00A193'>BPCE Infogérance & Technologies</br>
+		Tour de Contrôle (TRC) – Supervision Des Services (SDS)</strong></br>
+		14-18 Avenue du Général de Gaulle - 94220 Charenton-le-Pont</br></p>";
+				
+		mail($destinataire,$sujet,$message,$headers);
+		
+		$req_mail = "UPDATE $dbtable
+		SET mail = 'oui'
+		WHERE  statut LIKE 'Expiré' AND NOT statut IN ('Traité', 'Annulé', 'En cours')";
+		$DB_mail = $pdo->prepare($req_mail);
+		$DB_mail -> execute();
+	}
 }
 
 //echo <<<html
@@ -158,11 +173,9 @@ $DB_fetch -> execute();
 $i=0;
 
     while ($row=$DB_fetch->fetch(PDO::FETCH_ASSOC)) {
-        echo '<script type="text/javascript">
-                    createCountDown("timer'.$i.'", "'.$row['expiration'].'")
-              </script>';
+        $secondes = strtotime($row['expiration']) - time();
 
-        if($row['statut'] != 1){
+        if($row['statut'] != "Expiré"){
             echo '<tr><td class="ligne">'.$row['name'].'</td>';
             echo '<td class="ligne"> <div id="timer'.$i.'"></div></td>';
             echo '<td class="ligne">'.$row['action'].'</td>';
@@ -175,7 +188,7 @@ $i=0;
                 </td>';
             echo '</form>';
         }
-        else{
+        else{	
             echo '<tr><td class="erreur">'.$row['name'].'</td>';
             echo '<td class="erreur"> <div id="timer'.$i.'"></div></td>';
             echo '<td class="erreur"">'.$row['action'].'</td>';
@@ -188,7 +201,12 @@ $i=0;
                 </td>';
             echo '</form>';
         }
+		
+    echo '<script type="text/javascript">
+            createCountDown("timer'.$i.'", "'.$secondes.'")
+          </script>';
         $i++;
+
     }
     
     echo <<<html
@@ -210,16 +228,17 @@ $deleted = isset($_POST['deleted']) ? $_POST['deleted'] : NULL;
 $id = isset($_POST['id']) ? $_POST['id'] : NULL;
 
         if (!empty($treated)) {
-            $req_update_treated = "UPDATE $dbtable SET statut= 2, delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
+            $req_update_treated = "UPDATE $dbtable SET statut= 'Traité', delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
             $DB_update_treated = $pdo->prepare($req_update_treated);
             $DB_update_treated -> execute();
-            header("location: index.php");
+            //header("location: index.php");
         }
         if (!empty($deleted)) {
-            $req_update_deleted = "UPDATE $dbtable SET statut = 3, delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
+            $req_update_deleted = "UPDATE $dbtable SET statut = 'Annulé', delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
             $DB_update_deleted = $pdo->prepare($req_update_deleted);
             $DB_update_deleted -> execute();
-            header("location: index.php");
+            //header("location: index.php");
             }
 
-require_once("template/footer.php");?>
+
+ require_once("template/footer.php");?>
