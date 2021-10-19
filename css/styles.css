@@ -7,6 +7,7 @@ body{
    font:12pt sans-serif;
    color: #581d74;
    background-color: #faf3fd;
+   
 }
 header{
   background-color: #581d74;
@@ -18,13 +19,15 @@ div.logo{
   height: 54px;
   width: 270px;
   margin: 20px 0 20px 20px;
+  
 }
 div.title{
   float: left;
   height: 54px;
   margin: 23px 0 0 50px ;
   color: #faf3fd;
-  font:  35px bold sans-serif;
+  font:  35px bold;
+  font-family: "Verdana";
 }
 footer{
   bottom:0;
@@ -109,11 +112,12 @@ option{
  nav {
    height: 54px;
    margin: 20px 20px 20px 0 ;
-   font:  25px bold sans-serif;
+   font:  50px bold "Verdana";
    float: right;
    position: sticky;
    top: 0;
    width: 200px;
+   
  }
  nav > ul {
    display: flex;

@@ -26,8 +26,8 @@ session_start();
         value="<?php if(isset($_SESSION['nom'])) {echo $_SESSION['nom'];}?>" required>
 
         <label for="time"> Rappel dans (en minutes) :</label>
-        <input id="time" type="text" name="time" 
-        value="<?php echo '15';?>" required>
+        <input id="time" type="number" name="time" 
+        value="<?php echo '30';?>" required>
 
         <label for="action"> Actions requises :</label>
         <input id="action" list="required-actions" name="action" required>
@@ -170,6 +170,7 @@ echo '<table>';
 //html;
 
 $DB_fetch -> execute();
+$redirection = 'index.php';
 $i=0;
 
     while ($row=$DB_fetch->fetch(PDO::FETCH_ASSOC)) {
@@ -231,13 +232,13 @@ $id = isset($_POST['id']) ? $_POST['id'] : NULL;
             $req_update_treated = "UPDATE $dbtable SET statut= 'Traité', delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
             $DB_update_treated = $pdo->prepare($req_update_treated);
             $DB_update_treated -> execute();
-            //header("location: index.php");
+            header("location: index.php");
         }
         if (!empty($deleted)) {
             $req_update_deleted = "UPDATE $dbtable SET statut = 'Annulé', delay=TIMEDIFF(expiration, NOW()) WHERE id LIKE '$id'";
             $DB_update_deleted = $pdo->prepare($req_update_deleted);
             $DB_update_deleted -> execute();
-            //header("location: index.php");
+            header("location: index.php");
             }
 
 
