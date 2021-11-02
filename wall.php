@@ -15,7 +15,7 @@ require_once('inc/db_config.php');
         <meta name="robots" content="noindex, nofollow">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Refresh" content="60; url=wall.php">
-        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/styles_mur.css">
         <script src="js/countDown.js"></script>
     </head>
 

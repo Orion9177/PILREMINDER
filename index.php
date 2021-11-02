@@ -130,7 +130,7 @@ foreach ($data as $line){
 		
 //Envoi du mail de rappel au Pilotage BPCE    
 		//$destinataire = "baptiste.trolet-ext@natixis.com";
-		$destinataire = "bpce-it_n1_suivi_backoffice_b@bpce-it.fr";
+		$destinataire = "BPCE-IT_PILOTAGE_ZOS_B@bpce-it.fr,BPCE-IT_PILOTAGE_DIS_B@bpce-it.fr";
 		$headers = "From: bpce-it_n1_suivi_backoffice_b@bpce-it.fr\n";
 		$headers .= "Content-Type: text/html; charset=\"utf-8\"";
 				

@@ -1,3 +1,7 @@
+function Redirection() {
+    setTimeout("window.location=url", 500)
+}
+
 function createCountDown(elementId, temps, url){
     var x = setInterval(function () {
 

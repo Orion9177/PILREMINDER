@@ -1,22 +1,120 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
  /* --- Style commun --- */
 
 body{
    padding:10px;
-   font:12pt verdana;
+   font:12pt sans-serif;
    color: #581d74;
    background-color: #faf3fd;
+   
 }
+header{
+  background-color: #581d74;
+  height: 94px;
+  margin: 0 0 20px 0;
+}
+div.logo{
+  float: left;
+  height: 54px;
+  width: 270px;
+  margin: 20px 0 20px 20px;
+  
+}
+div.title{
+  float: left;
+  height: 54px;
+  margin: 23px 0 0 50px ;
+  color: #faf3fd;
+  font:  35px bold;
+  font-family: "Verdana";
+}
+footer{
+  bottom:0;
+  display: flex;
+  align-content: flex-end;
+  background-color: #581d74;
+  color: #faf3fd;
+  vertical-align: middle;
+  padding: 5px 15px;
+  height: 18.4px;
+  margin: 20px 0 0 0;
+}
+div.footer_right{
+   float: right;
+   vertical-align: middle;
+   width: 85px; 
+}
+div.footer_left{
+   float: left;
+   vertical-align: middle;
+   width: 300px;
+}
+
+ /* --- Style pour les formulaires --- */
+
+fieldset{
+   border:solid 1px #581d74;
+   border-radius:10px;
+   padding:20px;
+}
+legend{
+   font:bold 16pt;
+   color:#581d74;
+}
+input[type="submit"]{
+   background-color:#581d74;
+   color:#faf3fd;
+   cursor:pointer;
+   align-items: center;
+}
+input[type="reset"]{
+   background-color:#581d74;
+   color:#faf3fd;
+   cursor:pointer;
+   align-items: center;
+}
+input.retour{
+   background-color:#581d74;
+   color:#faf3fd;
+   cursor:pointer;
+   align-items: center;
+}
+input{
+   border:solid 1px #581d74;
+   padding:10px;
+   font:12pt sans-serif;
+   color:#581d74;
+   outline:none;
+   border-radius:6px;
+   margin-bottom:10px;
+}
+label{
+   margin-bottom:10px;
+   font:12pt sans-serif;
+   color:#581d74;
+}
+option{
+   font:12pt sans-serif;
+   color:#581d74;
+}
+
+
+ /* --- Style pour les tables --- */
+ 
  table{
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse; 
+    border-radius:10px;
     text-align: center;
+	font-size: 25px;
  }
  th.titre{
    background-color: #581d74;
    border: 1px solid black;
    color: #faf3fd;
-
+   
  }
  td.ligne{
    background-color: #faf3fd;
@@ -28,4 +126,5 @@ body{
   border: 1px solid black;
   color: #faf3fd;
   font : bold;
+
 }
