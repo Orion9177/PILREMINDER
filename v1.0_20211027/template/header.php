@@ -31,8 +31,7 @@ date_default_timezone_set("Europe/Paris");
                 <ul>
                     <li class="menu-deroulant"><a href="#">Menu</a>
                         <ul class="sous-menu">
-                            <li><a href="index.php">Choix du périmètre</a></li>
-                            <li><a href="view.php">Ajout d'un rappel</a></li>
+                            <li><a href="index.php">Ajout d'un rappel</a></li>
                             <li><a href="history.php">Historique</a></li>
                             <li><a href="wall.php">Vue mur d'image</a></li>
                         </ul>

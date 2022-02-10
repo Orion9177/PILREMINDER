@@ -2,8 +2,6 @@
 date_default_timezone_set("Europe/Paris");
 //require_once("processDisplay.php");
 require_once('inc/db_config.php');
-session_start();
-
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +15,7 @@ session_start();
         <meta name="robots" content="noindex, nofollow">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Refresh" content="60; url=wall.php">
-        <link rel="stylesheet" href="css/styles_mur.css">
+        <link rel="stylesheet" href="css/styles.css">
         <script src="js/countDown.js"></script>
     </head>
 
@@ -35,9 +33,9 @@ session_start();
 		</header>
 <?php
 
-$req_fetch = "SELECT id, name, action, statut, expiration, TIMEDIFF(expiration, NOW()), TIMEDIFF(NOW(), expiration), mail, perimetre
-FROM $dbtable
-WHERE statut IN ('En cours', 'Expiré') 
+$req_fetch = "SELECT id, name, action, statut, expiration, TIMEDIFF(expiration, NOW()), TIMEDIFF(NOW(), expiration), mail
+FROM $dbtable 
+WHERE statut IN ('En cours', 'Expiré')
 ORDER BY TIMEDIFF(expiration, NOW()) ASC";
 
 $DB_fetch = $pdo->prepare($req_fetch);
@@ -70,7 +68,6 @@ foreach ($data as $line){
 echo '<table>';
     echo '<thead>';
         echo '<tr>';
-            echo '<th class="titre">Périmètre</th>';
             echo '<th class="titre">Rappel</th>';
             echo '<th class="titre">Temps restant</th>';
             echo '<th class="titre">Actions</th>';
@@ -85,15 +82,13 @@ $i=0;
     while ($row = $DB_fetch -> fetch(PDO::FETCH_ASSOC) ) {
         $secondes = strtotime($row['expiration']) - time();
         if($row['statut'] == 'Expiré'){
-            echo '<tr><td class="erreur">'.$row['perimetre'].'</td>';
-            echo '<td class="erreur">'.$row['name'].'</td>';
+            echo '<tr><td class="erreur">'.$row['name'].'</td>';
             echo '<td class="erreur"> <div id="timer'.$i.'"></div></td>';
             echo '<td class="erreur">'.$row['action'].'</td>';
             }
 
         else{
-            echo '<tr><td class="ligne">'.$row['perimetre'].'</td>';
-            echo '<td class="ligne">'.$row['name'].'</td>';
+            echo '<tr><td class="ligne">'.$row['name'].'</td>';
             echo '<td class="ligne"> <div id="timer'.$i.'"></div></td>';
             echo '<td class="ligne"">'.$row['action'].'</td>';
             }  
