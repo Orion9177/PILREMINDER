@@ -12,11 +12,8 @@
 // Variable
 
 $hostname='localhost';
-$username='root';
-$password='root';
-//$hostname = "swpsup01";
-//$username = "backup";
-//$password = "save";
+$username='';
+$password='';
 $dbname='pilreminder';
 $dbtable= "reminder";
 
